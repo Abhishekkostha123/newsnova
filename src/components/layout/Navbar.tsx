@@ -16,10 +16,13 @@ export default function Navbar({ categories }: NavbarProps) {
   const [currentDate, setCurrentDate] = useState("");
 
   useEffect(() => {
-    // Format date like "Thursday, 28 May 2020"
+    // Format date like "Sunday, 17 May 2026"
     const date = new Date();
     const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    setCurrentDate(date.toLocaleDateString('en-US', options));
+    
+    // Replace comma if any, to match the exact user requested format if needed, 
+    // but the default 'en-US' or 'en-GB' might vary. 'en-GB' gives "Sunday, 17 May 2026" exactly.
+    setCurrentDate(date.toLocaleDateString('en-GB', options));
     
     setIsMobileMenuOpen(false);
   }, []);

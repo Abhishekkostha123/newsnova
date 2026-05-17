@@ -14,13 +14,15 @@ import { PostCard } from "@/components/news/PostCards";
 import { ArticleSkeleton } from "@/components/ui/Skeletons";
 
 export const revalidate = 60;
+export const dynamicParams = true; // Allows Next.js to fetch new articles dynamically instead of returning 404
 
 // ─── Generate Static Params ─────────────────────────────────────────────────
 export async function generateStaticParams() {
   try {
     const slugs = await getAllPostSlugs();
     return slugs.map((slug) => ({ slug }));
-  } catch {
+  } catch (error) {
+    console.error("Failed to fetch static params for posts", error);
     return [];
   }
 }
@@ -35,7 +37,12 @@ export async function generateMetadata({
 
   try {
     const post = await getPostBySlug(slug);
-    if (!post) return { title: "Post Not Found" };
+    if (!post) {
+      return { 
+        title: "Post Not Found",
+        alternates: { canonical: `${SITE_URL}/post/${slug}` } 
+      };
+    }
 
     const category = post.category as ICategory;
     const title = post.metaTitle || post.title;

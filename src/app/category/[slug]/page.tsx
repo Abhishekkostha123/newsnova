@@ -8,13 +8,15 @@ import { PostCardSkeleton } from "@/components/ui/Skeletons";
 import { SITE_URL, SITE_NAME } from "@/lib/utils";
 
 export const revalidate = 60;
+export const dynamicParams = true; // Allows Next.js to dynamically fetch missing categories
 
 // ─── Generate Static Params ─────────────────────────────────────────────────
 export async function generateStaticParams() {
   try {
     const slugs = await getAllCategorySlugs();
     return slugs.map((slug) => ({ slug }));
-  } catch {
+  } catch (error) {
+    console.error("Failed to generate category static params:", error);
     return [];
   }
 }
@@ -29,7 +31,12 @@ export async function generateMetadata({
 
   try {
     const category = await getCategoryBySlug(slug);
-    if (!category) return { title: "Category Not Found" };
+    if (!category) {
+      return { 
+        title: "Category Not Found",
+        alternates: { canonical: `${SITE_URL}/category/${slug}` } 
+      };
+    }
 
     return {
       title: `${category.name} News`,
