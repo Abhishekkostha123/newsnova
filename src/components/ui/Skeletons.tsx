@@ -67,6 +67,8 @@ export function TrendingCardSkeleton({ rank }: { rank: number }) {
 }
 
 export function ArticleSkeleton() {
+  const widths = [70, 85, 75, 90, 80, 95, 72, 88];
+
   return (
     <div className="container-narrow py-8 space-y-6">
       <div className="h-5 w-24 skeleton" />
@@ -85,7 +87,7 @@ export function ArticleSkeleton() {
           <div
             key={i}
             className="h-4 skeleton"
-            style={{ width: `${70 + Math.random() * 30}%` }}
+            style={{ width: `${widths[i % widths.length]}%` }}
           />
         ))}
       </div>
