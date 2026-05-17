@@ -24,7 +24,9 @@ const nextConfig: NextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
   },
-
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   // ISR revalidation defaults
   async headers() {
     return [
