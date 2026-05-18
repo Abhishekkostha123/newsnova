@@ -21,32 +21,32 @@ export const metadata: Metadata = {
   description:
     "NewsNova is your trusted digital source for breaking Jhansi news, latest Uttar Pradesh updates, national headlines, politics, technology, and sports.",
   keywords: [
-    "news",
-    "breaking news",
-    "latest news",
-    "trending",
-    "world news",
-    "technology",
-    "politics",
-    "sports",
+  "Jhansi News",
+  "breaking Jhansi news",
+  "latest Jhansi news today",
+  "Bundelkhand news",
+  "Uttar Pradesh news",
+  "UP news today",
+  "India news",
+  "NewsNova",
   ],
   authors: [{ name: SITE_NAME }],
   creator: SITE_NAME,
   publisher: SITE_NAME,
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "en_IN",
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — Breaking News & Latest Stories`,
+    title: `${SITE_NAME} — Breaking Jhansi News & National Coverage`,
     description:
-      "Your trusted source for breaking news, trending stories, and in-depth analysis.",
+      "Get real-time Jhansi news, latest Uttar Pradesh updates, national headlines, politics, sports, and technology — all on NewsNova, your trusted digital news platform.",
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} — Breaking News & Latest Stories`,
+    title: `${SITE_NAME} — Breaking Jhansi News & National Coverage`,
     description:
-      "Your trusted source for breaking news, trending stories, and in-depth analysis.",
+      "Get real-time Jhansi news, latest Uttar Pradesh updates, national headlines, politics, sports, and technology — all on NewsNova, your trusted digital news platform.",
   },
   robots: {
     index: true,
@@ -103,7 +103,7 @@ export default function RootLayout({
     logo: `${SITE_URL}/logo.png`,
     sameAs: [
       "https://twitter.com/newsnova",
-      "https://facebook.com/newsnova",
+      "https://www.facebook.com/NewsNovaJhansi/",
       "https://youtube.com/newsnova",
     ],
   };
