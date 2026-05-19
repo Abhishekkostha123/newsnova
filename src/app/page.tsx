@@ -2,24 +2,18 @@ import { Suspense } from "react";
 import { getLatestPosts, getBreakingNews, getTrendingPosts } from "@/lib/posts";
 import { getCategories } from "@/lib/categories";
 import BreakingNews from "@/components/news/BreakingNews";
-import { HeroCard } from "@/components/news/PostCards";
+import { HeroCard, PostCard, CompactCard, TrendingCard } from "@/components/news/PostCards";
 import SectionHeader from "@/components/ui/SectionHeader";
 import {
   HeroSkeleton,
   PostCardSkeleton,
-  CompactCardSkeleton,
   TrendingCardSkeleton,
+  CompactCardSkeleton,
 } from "@/components/ui/Skeletons";
 import { IPost, ICategory } from "@/types";
 import { getPostsGroupedByCategory } from "@/lib/posts";
 import { SITE_URL } from "@/lib/utils";
 import Link from "next/link";
-import dynamic from "next/dynamic";
-
-const PostCard = dynamic(() => import("@/components/news/PostCards").then(mod => mod.PostCard), { ssr: true });
-const CompactCard = dynamic(() => import("@/components/news/PostCards").then(mod => mod.CompactCard), { ssr: true });
-const TrendingCard = dynamic(() => import("@/components/news/PostCards").then(mod => mod.TrendingCard), { ssr: true });
-
 import { Metadata } from "next";
 
 export const revalidate = 60; // ISR: revalidate every 60 seconds

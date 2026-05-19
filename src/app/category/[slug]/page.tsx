@@ -49,6 +49,12 @@ export async function generateMetadata({
           category.description ||
           `Read the latest ${category.name} news and stories.`,
         url: `${SITE_URL}/category/${category.slug}`,
+        images: [{ url: `${SITE_URL}/og-default.png`, width: 1200, height: 630 }],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: `${category.name} News | ${SITE_NAME}`,
+        images: [`${SITE_URL}/og-default.png`],
       },
       alternates: {
         canonical: `${SITE_URL}/category/${category.slug}`,

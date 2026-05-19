@@ -152,6 +152,17 @@ export async function getAllPostSlugs(): Promise<string[]> {
   return posts.map((p) => p.slug);
 }
 
+// ─── Get posts for sitemap (slug + date only) ────────────────────────────────
+export async function getPostsForSitemap(): Promise<{ slug: string; updatedAt: string }[]> {
+  await dbConnect();
+
+  const posts = await Post.find({ published: true })
+    .select("slug updatedAt")
+    .sort({ updatedAt: -1 })
+    .lean();
+  return serialize<{ slug: string; updatedAt: string }[]>(posts);
+}
+
 // ─── Increment post views ───────────────────────────────────────────────────
 export async function incrementViews(slug: string): Promise<void> {
   await dbConnect();

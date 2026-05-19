@@ -9,10 +9,10 @@ const nextConfig: NextConfig = {
     deviceSizes: [320, 420, 768, 1024, 1200],
     imageSizes: [16, 32, 48, 64, 96],
     remotePatterns: [
-      { protocol: "https", hostname: "res.cloudinary.com" },
-      { protocol: "https", hostname: "images.unsplash.com" },
-      { protocol: "https", hostname: "i.ibb.co" },
-      { protocol: "https", hostname: "*.imgbb.com" },
+      // Allow any HTTPS image source — required for a news site where
+      // article images come from many unpredictable external domains.
+      { protocol: "https", hostname: "**" },
+      { protocol: "http", hostname: "**" },
     ],
   },
   compiler: {
@@ -24,6 +24,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        // API routes: CORS
         source: "/api/:path*",
         headers: [
           { key: "Access-Control-Allow-Origin", value: "*" },
@@ -32,15 +33,38 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // Static assets: immutable 1 year cache
         source: "/_next/static/:path*",
         headers: [
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
       },
       {
+        // Optimized images: 7-day cache with background revalidation
         source: "/_next/image/:path*",
         headers: [
           { key: "Cache-Control", value: "public, max-age=604800, stale-while-revalidate=86400" },
+        ],
+      },
+      {
+        // Article pages: ISR-friendly cache (60s fresh, 5min stale)
+        source: "/post/:slug*",
+        headers: [
+          { key: "Cache-Control", value: "public, s-maxage=60, stale-while-revalidate=300" },
+        ],
+      },
+      {
+        // Category pages: slightly longer cache
+        source: "/category/:slug*",
+        headers: [
+          { key: "Cache-Control", value: "public, s-maxage=120, stale-while-revalidate=600" },
+        ],
+      },
+      {
+        // RSS/Sitemap: cache for 1 hour
+        source: "/(feed.xml|sitemap.xml|robots.txt)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=600" },
         ],
       },
     ];

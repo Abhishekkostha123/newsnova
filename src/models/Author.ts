@@ -29,7 +29,7 @@ const AuthorSchema = new Schema<IAuthorDocument>(
   { timestamps: true }
 );
 
-AuthorSchema.index({ slug: 1 });
+
 
 const Author: Model<IAuthorDocument> =
   mongoose.models.Author ||

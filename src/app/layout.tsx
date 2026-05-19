@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { Inter, Playfair_Display, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
@@ -41,12 +40,14 @@ export const metadata: Metadata = {
     title: `${SITE_NAME} — Breaking Jhansi News & National Coverage`,
     description:
       "Get real-time Jhansi news, latest Uttar Pradesh updates, national headlines, politics, sports, and technology — all on NewsNova, your trusted digital news platform.",
+    images: [{ url: `${SITE_URL}/og-default.png`, width: 1200, height: 630, alt: SITE_NAME }],
   },
   twitter: {
     card: "summary_large_image",
     title: `${SITE_NAME} — Breaking Jhansi News & National Coverage`,
     description:
       "Get real-time Jhansi news, latest Uttar Pradesh updates, national headlines, politics, sports, and technology — all on NewsNova, your trusted digital news platform.",
+    images: [`${SITE_URL}/og-default.png`],
   },
   robots: {
     index: true,
@@ -61,12 +62,12 @@ export const metadata: Metadata = {
   },
 };
 
-async function LayoutContent({ children }: { children: React.ReactNode }) {
+async function LayoutShell({ children }: { children: React.ReactNode }) {
   let categories: ICategory[] = [];
   try {
     categories = await getCategories();
   } catch {
-    // Fallback: render without categories if DB is unavailable
+    // Render without categories if DB is unavailable
   }
 
   return (
@@ -83,59 +84,51 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const websiteSchema = {
+  // Merged into single @graph to reduce script tags and payload size
+  const siteSchema = {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: SITE_NAME,
-    url: SITE_URL,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${SITE_URL}/search?q={search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
-  };
-
-  const orgSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: SITE_NAME,
-    url: SITE_URL,
-    logo: `${SITE_URL}/logo.png`,
-    sameAs: [
-      "https://twitter.com/newsnova",
-      "https://www.facebook.com/NewsNovaJhansi/",
-      "https://youtube.com/newsnova",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${SITE_URL}/#website`,
+        name: SITE_NAME,
+        url: SITE_URL,
+        potentialAction: {
+          "@type": "SearchAction",
+          target: `${SITE_URL}/search?q={search_term_string}`,
+          "query-input": "required name=search_term_string",
+        },
+      },
+      {
+        "@type": "Organization",
+        "@id": `${SITE_URL}/#organization`,
+        name: SITE_NAME,
+        url: SITE_URL,
+        logo: {
+          "@type": "ImageObject",
+          url: `${SITE_URL}/logo.png`,
+        },
+        sameAs: [
+          "https://twitter.com/newsnova",
+          "https://www.facebook.com/NewsNovaJhansi/",
+          "https://youtube.com/newsnova",
+        ],
+      },
     ],
   };
 
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${playfair.variable} ${jetbrains.variable}`}>
       <head>
-        <link
-          rel="alternate"
-          type="application/rss+xml"
-          title={`${SITE_NAME} RSS Feed`}
-          href="/feed.xml"
-        />
+        <link rel="alternate" type="application/rss+xml" title={`${SITE_NAME} RSS Feed`} href="/feed.xml" />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteSchema) }}
         />
       </head>
       <body className="antialiased font-sans">
-        <Suspense
-          fallback={
-            <div className="min-h-screen bg-[var(--bg-primary)] flex items-center justify-center">
-              <div className="w-10 h-10 border-4 border-[var(--accent-primary)] border-t-transparent rounded-full animate-spin" />
-            </div>
-          }
-        >
-          <LayoutContent>{children}</LayoutContent>
-        </Suspense>
+        {/* LayoutShell is async but does NOT block page content — children stream independently */}
+        <LayoutShell>{children}</LayoutShell>
       </body>
     </html>
   );

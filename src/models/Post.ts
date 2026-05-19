@@ -77,7 +77,7 @@ const PostSchema = new Schema<IPostDocument>(
 );
 
 // Indexes for fast lookups
-PostSchema.index({ slug: 1 });
+
 PostSchema.index({ published: 1, createdAt: -1 });
 PostSchema.index({ category: 1, published: 1, createdAt: -1 });
 PostSchema.index({ tags: 1 });

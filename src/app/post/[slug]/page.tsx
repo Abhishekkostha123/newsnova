@@ -78,7 +78,7 @@ export async function generateMetadata({
         images: post.coverImage ? [post.coverImage] : [],
       },
       alternates: {
-        canonical: post.canonicalUrl || `${SITE_URL}/post/${post.slug}`,
+        canonical: `${SITE_URL}/post/${post.slug}`,
       },
     };
   } catch {
@@ -154,94 +154,51 @@ export default async function ArticlePage({
   const categoryId =
     typeof post.category === "object" ? post.category._id : (post.category as string);
 
-  // JSON-LD Structured Data
-  const jsonLd = {
+  // Single @graph reduces HTML size vs two separate scripts
+  const articleSchema = {
     "@context": "https://schema.org",
-    "@type": "NewsArticle",
-    headline: post.title,
-    description: post.excerpt || post.title,
-    image: post.coverImage
-      ? {
-          "@type": "ImageObject",
-          url: post.coverImage,
-          width: 1200,
-          height: 630,
-        }
-      : undefined,
-    datePublished: post.createdAt,
-    dateModified: post.updatedAt || post.createdAt,
-    author: author
-      ? {
-          "@type": "Person",
-          name: author.name,
-          url: `${SITE_URL}/author/${author.slug}`,
-          jobTitle: "Journalist",
-        }
-      : {
+    "@graph": [
+      {
+        "@type": "NewsArticle",
+        "@id": `${SITE_URL}/post/${post.slug}/#article`,
+        headline: post.title,
+        description: post.excerpt || post.title,
+        image: post.coverImage
+          ? { "@type": "ImageObject", url: post.coverImage, width: 1200, height: 630 }
+          : undefined,
+        datePublished: post.createdAt,
+        dateModified: post.updatedAt || post.createdAt,
+        author: author
+          ? { "@type": "Person", name: author.name, url: `${SITE_URL}/author/${author.slug}` }
+          : { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+        publisher: {
           "@type": "Organization",
           name: SITE_NAME,
           url: SITE_URL,
+          logo: { "@type": "ImageObject", url: `${SITE_URL}/logo.png` },
         },
-    publisher: {
-      "@type": "Organization",
-      name: SITE_NAME,
-      url: SITE_URL,
-      logo: {
-        "@type": "ImageObject",
-        url: `${SITE_URL}/logo.png`,
-        width: 600,
-        height: 60,
+        mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE_URL}/post/${post.slug}` },
+        articleSection: category?.name || "News",
+        inLanguage: "en-IN",
       },
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `${SITE_URL}/post/${post.slug}`,
-    },
-    isAccessibleForFree: post.accessType === "Free",
-    articleSection: category?.name || "News",
-    keywords: post.tags && post.tags.length > 0 ? post.tags.join(", ") : "News",
-    inLanguage: "en-US",
-  };
-
-  const breadcrumbLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
       {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: SITE_URL,
-      },
-      ...(category
-        ? [
-            {
-              "@type": "ListItem",
-              position: 2,
-              name: category.name,
-              item: `${SITE_URL}/category/${category.slug}`,
-            },
-          ]
-        : []),
-      {
-        "@type": "ListItem",
-        position: category ? 3 : 2,
-        name: post.title,
-        item: `${SITE_URL}/post/${post.slug}`,
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+          ...(category
+            ? [{ "@type": "ListItem", position: 2, name: category.name, item: `${SITE_URL}/category/${category.slug}` }]
+            : []),
+          { "@type": "ListItem", position: category ? 3 : 2, name: post.title, item: `${SITE_URL}/post/${post.slug}` },
+        ],
       },
     ],
   };
 
   return (
     <>
-      {/* Structured Data */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
 
       {/* View Tracker */}
