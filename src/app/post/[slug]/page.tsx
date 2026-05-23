@@ -11,7 +11,6 @@ import TableOfContents from "@/components/article/TableOfContents";
 import ViewTracker from "@/components/article/ViewTracker";
 import CommentSection from "@/components/comments/CommentSection";
 import { PostCard } from "@/components/news/PostCards";
-import { ArticleSkeleton } from "@/components/ui/Skeletons";
 
 export const revalidate = 60;
 export const dynamicParams = true; // Allows Next.js to fetch new articles dynamically instead of returning 404
@@ -371,9 +370,11 @@ export default async function ArticlePage({
                   Tags
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {post.tags.map((tag) => (
+                  {Array.from(
+                    new Map(post.tags.map((t) => [t.toLowerCase().trim(), t])).values()
+                  ).map((tag, i) => (
                     <span
-                      key={tag}
+                      key={`${tag}-${i}`}
                       className="px-3 py-1.5 text-xs font-medium bg-[var(--bg-tertiary)] text-[var(--text-secondary)] rounded-lg hover:text-[var(--accent-primary)] hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer"
                     >
                       #{tag}

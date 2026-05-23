@@ -1,3 +1,4 @@
+import { cache } from "react";
 import dbConnect from "@/lib/db";
 import Category from "@/models/Category";
 import { ICategory } from "@/types";
@@ -7,28 +8,26 @@ function serialize<T>(doc: unknown): T {
 }
 
 // ─── Get all categories ──────────────────────────────────────────────────────
-export async function getCategories(): Promise<ICategory[]> {
+export const getCategories = cache(async (): Promise<ICategory[]> => {
   await dbConnect();
 
   const categories = await Category.find({}).sort({ name: 1 }).lean();
   return serialize<ICategory[]>(categories);
-}
+});
 
 // ─── Get category by slug ────────────────────────────────────────────────────
-export async function getCategoryBySlug(
-  slug: string
-): Promise<ICategory | null> {
+export const getCategoryBySlug = cache(async (slug: string): Promise<ICategory | null> => {
   await dbConnect();
 
   const category = await Category.findOne({ slug }).lean();
   if (!category) return null;
   return serialize<ICategory>(category);
-}
+});
 
 // ─── Get all category slugs (for static generation) ─────────────────────────
-export async function getAllCategorySlugs(): Promise<string[]> {
+export const getAllCategorySlugs = cache(async (): Promise<string[]> => {
   await dbConnect();
 
   const categories = await Category.find({}).select("slug").lean();
   return categories.map((c) => c.slug);
-}
+});

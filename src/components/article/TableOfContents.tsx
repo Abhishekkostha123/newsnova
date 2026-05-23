@@ -57,9 +57,9 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
           On This Page
         </h4>
         <ul className="space-y-1">
-          {headings.map(({ id, text, level }) => (
-            <li key={id}>
-              <a
+{headings.map(({ id, text, level }, index) => (
+  <li key={`${id}-${text}-${level}`}>
+                <a
                 href={`#${id}`}
                 className={`toc-link line-clamp-2 break-words ${activeId === id ? "active text-[#ac2b25] border-[#ac2b25]" : "text-gray-500 hover:text-[#ac2b25]"}`}
                 style={{ paddingLeft: `${(level - 2) * 0.75 + 1}rem` }}

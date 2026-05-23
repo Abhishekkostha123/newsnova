@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { motion } from "framer-motion";
 import { IPost } from "@/types";
 import { PostCard } from "@/components/news/PostCards";
 import { PostCardSkeleton } from "@/components/ui/Skeletons";
@@ -57,10 +56,8 @@ export default function LoadMorePosts({
       </div>
 
       {hasMore && !isLoading && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex justify-center mt-8 sm:mt-12"
+        <div
+          className="flex justify-center mt-8 sm:mt-12 animate-fade-in"
         >
           <button
             onClick={loadMore}
@@ -68,7 +65,7 @@ export default function LoadMorePosts({
           >
             Load More Articles
           </button>
-        </motion.div>
+        </div>
       )}
 
       {!hasMore && posts.length > 0 && (

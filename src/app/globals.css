@@ -68,7 +68,6 @@
 }
 
 html {
-  scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
@@ -129,8 +128,6 @@ body {
 /* ─── Glassmorphism Card ───────────────────────────────────────────────────── */
 .glass-card {
   background: var(--bg-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   transition: all var(--transition-base);
@@ -140,6 +137,41 @@ body {
   border-color: var(--border-hover);
   box-shadow: var(--accent-glow);
   transform: translateY(-2px);
+  will-change: transform;
+}
+
+/* ─── Performance/Transition Helpers ─────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes pulse-badge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.25s ease-out forwards;
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-pulse-badge {
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+
+/* Applied to below-fold homepage sections to improve LCP/FCP/INP */
+.container-main + .container-main {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
 }
 
 /* ─── Gradient Text ────────────────────────────────────────────────────────── */

@@ -1,7 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
-
 interface SectionHeaderProps {
   title: string;
   subtitle?: string;
@@ -16,11 +12,7 @@ export default function SectionHeader({
   viewAllHref,
 }: SectionHeaderProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4 }}
+    <div
       className="flex items-end justify-between mb-6 sm:mb-8 border-b-2 border-gray-200 pb-3 relative"
     >
       {/* Accent Line Bottom */}
@@ -62,6 +54,6 @@ export default function SectionHeader({
           </svg>
         </a>
       )}
-    </motion.div>
+    </div>
   );
 }

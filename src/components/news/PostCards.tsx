@@ -1,6 +1,3 @@
-"use client";
-
-import { memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { IPost, ICategory } from "@/types";
@@ -9,7 +6,7 @@ import { formatDate } from "@/lib/utils";
 // ─── Shared helpers ───────────────────────────────────────────────────────────
 
 const ClockIcon = () => (
-  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+  <svg className="w-3 h-3 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>
 );
@@ -32,11 +29,11 @@ const CategoryLabel = ({ name, color }: { name: string; color?: string }) => (
 
 // ─── HeroCard ────────────────────────────────────────────────────────────────
 
-export const HeroCard = memo(function HeroCard({ post }: { post: IPost }) {
+export function HeroCard({ post }: { post: IPost }) {
   const category = post.category as ICategory;
 
   return (
-    <article className="relative group overflow-hidden">
+    <article className="relative group overflow-hidden bg-gray-900">
       <Link href={`/post/${post.slug}`} className="block relative">
         {/* Image */}
         <div className="relative aspect-[16/9] md:aspect-[21/9]">
@@ -44,10 +41,12 @@ export const HeroCard = memo(function HeroCard({ post }: { post: IPost }) {
             src={post.coverImage || "/placeholder.jpg"}
             alt={post.coverImageAlt || post.title}
             fill
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            className="object-cover transition-transform duration-500 group-hover:scale-102"
             sizes="(max-width: 768px) 100vw, 1280px"
             priority
             fetchPriority="high"
+            placeholder="blur"
+            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iMjIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzIyMjIiLz48L3N2Zz4="
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
         </div>
@@ -87,11 +86,11 @@ export const HeroCard = memo(function HeroCard({ post }: { post: IPost }) {
       </Link>
     </article>
   );
-});
+}
 
 // ─── PostCard ────────────────────────────────────────────────────────────────
 
-export const PostCard = memo(function PostCard({
+export function PostCard({
   post,
   index = 0,
 }: {
@@ -103,18 +102,19 @@ export const PostCard = memo(function PostCard({
   return (
     <article
       className="bg-white border border-gray-100 overflow-hidden group hover:border-[#ac2b25]/30 hover:shadow-[0_4px_24px_rgba(172,43,37,0.08)] transition-all duration-300"
-      style={{ animationDelay: `${index * 50}ms` }}
     >
       <Link href={`/post/${post.slug}`} className="block">
         {/* Image */}
-        <div className="relative aspect-[16/10] overflow-hidden">
+        <div className="relative aspect-[16/10] overflow-hidden bg-gray-50">
           <Image
             src={post.coverImage || "/placeholder.jpg"}
             alt={post.coverImageAlt || post.title}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="object-cover transition-transform duration-500 group-hover:scale-102"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            loading={index < 3 ? "eager" : "lazy"}
+            loading={index < 4 ? "eager" : "lazy"}
+            placeholder="blur"
+            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iMjUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2YxZjNmNSIvPjwvc3ZnPg=="
           />
           {/* Category pill on image */}
           {category && (
@@ -155,16 +155,14 @@ export const PostCard = memo(function PostCard({
       </Link>
     </article>
   );
-});
+}
 
 // ─── CompactCard ─────────────────────────────────────────────────────────────
 
-export const CompactCard = memo(function CompactCard({
+export function CompactCard({
   post,
-  index = 0,
 }: {
   post: IPost;
-  index?: number;
 }) {
   const category = post.category as ICategory;
 
@@ -175,7 +173,7 @@ export const CompactCard = memo(function CompactCard({
         className="flex gap-3 p-3 border border-gray-100 hover:border-[#ac2b25]/20 hover:bg-red-50/40 transition-all duration-200"
       >
         {/* Thumbnail */}
-        <div className="relative w-20 h-20 sm:w-24 sm:h-24 overflow-hidden shrink-0">
+        <div className="relative w-20 h-20 sm:w-24 sm:h-24 overflow-hidden shrink-0 bg-gray-50">
           <Image
             src={post.coverImage || "/placeholder.jpg"}
             alt={post.coverImageAlt || post.title}
@@ -183,6 +181,8 @@ export const CompactCard = memo(function CompactCard({
             className="object-cover transition-transform duration-500 group-hover:scale-110"
             sizes="96px"
             loading="lazy"
+            placeholder="blur"
+            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2YxZjNmNSIvPjwvc3ZnPg=="
           />
         </div>
 
@@ -200,11 +200,11 @@ export const CompactCard = memo(function CompactCard({
       </Link>
     </article>
   );
-});
+}
 
 // ─── TrendingCard ────────────────────────────────────────────────────────────
 
-export const TrendingCard = memo(function TrendingCard({
+export function TrendingCard({
   post,
   rank,
 }: {
@@ -244,4 +244,4 @@ export const TrendingCard = memo(function TrendingCard({
       </div>
     </article>
   );
-});
+}

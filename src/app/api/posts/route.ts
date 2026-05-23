@@ -34,6 +34,7 @@ export async function GET(request: NextRequest) {
     const posts = await Post.find(filter)
       .populate("category", "name slug color")
       .populate("author", "name slug avatar")
+      .select("-content -metaTitle -metaDescription -canonicalUrl -accessType")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { IComment } from "@/types";
 import { timeAgo } from "@/lib/utils";
 
@@ -140,56 +139,46 @@ export default function CommentSection({
 
       {/* Comments List */}
       <div className="mt-8 space-y-6">
-        <AnimatePresence mode="popLayout">
-          {comments.map((comment) => (
-            <motion.div
-              key={comment._id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              layout
-            >
-              <CommentItem
-                comment={comment}
-                onReply={() => setReplyTo(comment._id)}
-                onLike={() => handleLike(comment._id)}
-              />
+        {comments.map((comment) => (
+          <div
+            key={comment._id}
+            className="animate-fade-in"
+          >
+            <CommentItem
+              comment={comment}
+              onReply={() => setReplyTo(comment._id)}
+              onLike={() => handleLike(comment._id)}
+            />
 
-              {/* Replies */}
-              {comment.replies && comment.replies.length > 0 && (
-                <div className="ml-6 sm:ml-10 mt-4 space-y-4 border-l-2 border-[var(--border-color)] pl-4">
-                  {comment.replies.map((reply) => (
-                    <CommentItem
-                      key={reply._id}
-                      comment={reply}
-                      onLike={() => handleLike(reply._id)}
-                      isReply
-                    />
-                  ))}
-                </div>
-              )}
+            {/* Replies */}
+            {comment.replies && comment.replies.length > 0 && (
+              <div className="ml-6 sm:ml-10 mt-4 space-y-4 border-l-2 border-[var(--border-color)] pl-4">
+                {comment.replies.map((reply) => (
+                  <CommentItem
+                    key={reply._id}
+                    comment={reply}
+                    onLike={() => handleLike(reply._id)}
+                    isReply
+                  />
+                ))}
+              </div>
+            )}
 
-              {/* Reply Form */}
-              <AnimatePresence>
-                {replyTo === comment._id && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="ml-6 sm:ml-10 mt-4"
-                  >
-                    <CommentForm
-                      onSubmit={(e) => handleSubmit(e, comment._id)}
-                      isSubmitting={isSubmitting}
-                      onCancel={() => setReplyTo(null)}
-                      isReply
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+            {/* Reply Form */}
+            {replyTo === comment._id && (
+              <div
+                className="ml-6 sm:ml-10 mt-4 animate-fade-in"
+              >
+                <CommentForm
+                  onSubmit={(e) => handleSubmit(e, comment._id)}
+                  isSubmitting={isSubmitting}
+                  onCancel={() => setReplyTo(null)}
+                  isReply
+                />
+              </div>
+            )}
+          </div>
+        ))}
 
         {comments.length === 0 && (
           <div className="text-center py-12">

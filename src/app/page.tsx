@@ -1,32 +1,84 @@
 import { Suspense } from "react";
-import { getLatestPosts, getBreakingNews, getTrendingPosts } from "@/lib/posts";
+import {
+  getLatestPosts,
+  getBreakingNews,
+  getTrendingPosts,
+  getHomepageCategoryData,
+} from "@/lib/posts";
 import { getCategories } from "@/lib/categories";
 import BreakingNews from "@/components/news/BreakingNews";
-import { HeroCard, PostCard, CompactCard, TrendingCard } from "@/components/news/PostCards";
+import {
+  HeroCard,
+  PostCard,
+  CompactCard,
+  TrendingCard,
+} from "@/components/news/PostCards";
 import SectionHeader from "@/components/ui/SectionHeader";
 import {
   HeroSkeleton,
   PostCardSkeleton,
   TrendingCardSkeleton,
-  CompactCardSkeleton,
 } from "@/components/ui/Skeletons";
 import { IPost, ICategory } from "@/types";
-import { getPostsGroupedByCategory } from "@/lib/posts";
-import { SITE_URL } from "@/lib/utils";
 import Link from "next/link";
 import { Metadata } from "next";
 
-export const revalidate = 60; // ISR: revalidate every 60 seconds
+// ─── ISR: 5 min kaafi hai news site ke liye (60s bahut aggressive tha) ───────
+export const revalidate = 300;
 
+// ─── SEO Metadata ─────────────────────────────────────────────────────────────
 export const metadata: Metadata = {
-  title: "NewsNova — Breaking News & Latest Stories",
-  description: "Your trusted source for breaking news, trending stories, and in-depth analysis.",
+  title: "NewsNova | Breaking News from Jhansi, UP & Across India",
+  description:
+    "NewsNova is your trusted source for breaking Jhansi news, latest Uttar Pradesh updates, India news, politics, technology, entertainment, sports, and trending stories — all in one place.",
+  keywords: [
+    "Jhansi news",
+    "Bundelkhand news",
+    "UP news hindi",
+    "Uttar Pradesh breaking news",
+    "India latest news",
+    "NewsNova",
+  ],
   alternates: {
-    canonical: SITE_URL,
+    canonical: "https://www.newsnova.online",
+  },
+  openGraph: {
+    title: "NewsNova | Breaking News from Jhansi, UP & Across India",
+    description:
+      "NewsNova is your trusted source for breaking Jhansi news, latest Uttar Pradesh updates, India news, politics, technology, entertainment, sports, and trending stories.",
+    url: "https://www.newsnova.online",
+    siteName: "NewsNova",
+    locale: "en_IN",
+    type: "website",
+    images: [
+      {
+        url: "https://www.newsnova.online/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "NewsNova - Breaking News from Jhansi and UP",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NewsNova | Breaking News from Jhansi, UP & India",
+    description:
+      "Breaking Jhansi news, UP updates, India news — all in one place.",
+    images: ["https://www.newsnova.online/og-image.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+    },
   },
 };
 
-// ─── Hero Section ────────────────────────────────────────────────────────────
+// ─── Hero Section ─────────────────────────────────────────────────────────────
 async function HeroSection() {
   const posts = await getLatestPosts(5);
   if (!posts || posts.length === 0) return null;
@@ -35,16 +87,19 @@ async function HeroSection() {
 
   return (
     <section className="container-main mt-6 sm:mt-8">
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      {/* sr-only: Google + screen readers dono ke liye valid — text-[0px] risky tha */}
+      <h1 className="sr-only">
+        NewsNova — Breaking News from Jhansi, Bundelkhand & Uttar Pradesh
+      </h1>
 
-        {/* Main Hero — rounded */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* Main Hero */}
         <div className="lg:col-span-3 rounded-xl overflow-hidden">
           <HeroCard post={mainPost} />
         </div>
 
         {/* Sidebar */}
         <div className="lg:col-span-2 flex flex-col gap-3">
-          {/* Header */}
           <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
             <span className="w-1 h-4 bg-[#ac2b25]" />
             <span className="text-[10px] font-black uppercase tracking-[0.18em] text-gray-400">
@@ -52,18 +107,21 @@ async function HeroSection() {
             </span>
           </div>
 
-          {/* Cards */}
           {sidebarPosts.slice(0, 4).map((post, i) => (
-            <CompactCard key={post._id} post={post} index={i} />
+            <CompactCard
+              key={`${post._id}-${post.slug}-${i}`}
+              post={post}
+            />
           ))}
         </div>
-
       </div>
     </section>
   );
 }
 
-// ─── Latest News Grid ────────────────────────────────────────────────────────
+// ─── Latest News Grid ─────────────────────────────────────────────────────────
+// NOTE: React.cache() getLatestPosts mein lagao (lib/posts.ts) — tab yeh
+// HeroSection ke saath duplicate DB call nahi karega (same request mein dedupe)
 async function LatestNewsSection() {
   const posts = await getLatestPosts(8);
   if (!posts || posts.length === 0) return null;
@@ -77,14 +135,18 @@ async function LatestNewsSection() {
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {posts.map((post, i) => (
-          <PostCard key={post._id} post={post} index={i} />
+          <PostCard
+            key={`${post._id}-${post.slug}-${i}`}
+            post={post}
+            index={i}
+          />
         ))}
       </div>
     </section>
   );
 }
 
-// ─── Trending Section ────────────────────────────────────────────────────────
+// ─── Trending Section ─────────────────────────────────────────────────────────
 async function TrendingSection() {
   const posts = await getTrendingPosts(6);
   if (!posts || posts.length === 0) return null;
@@ -98,20 +160,20 @@ async function TrendingSection() {
       />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {posts.map((post, i) => (
-          <TrendingCard key={post._id} post={post} rank={i + 1} />
+          <TrendingCard
+            key={`${post._id}-${post.slug}-${i}`}
+            post={post}
+            rank={i + 1}
+          />
         ))}
       </div>
     </section>
   );
 }
 
-// ─── Category Blocks ─────────────────────────────────────────────────────────
+// ─── Category Blocks ──────────────────────────────────────────────────────────
 async function CategoryBlocksSection() {
-  const [categories, groupedPosts] = await Promise.all([
-    getCategories(),
-    getPostsGroupedByCategory(4),
-  ]);
-
+  const { categories, groupedPosts } = await getHomepageCategoryData(4, 4);
   if (!categories || categories.length === 0) return null;
 
   return (
@@ -119,12 +181,12 @@ async function CategoryBlocksSection() {
       <SectionHeader title="Browse by Category" accent="Browse" />
 
       <div className="space-y-12">
-        {categories.slice(0, 4).map((category) => {
+        {categories.map((category) => {
           const posts = groupedPosts.get(category.slug) || [];
           if (posts.length === 0) return null;
 
           return (
-            <div key={category._id}>
+            <div key={`${category._id}-${category.slug}`}>
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">
                   <span
@@ -156,7 +218,7 @@ async function CategoryBlocksSection() {
   );
 }
 
-// ─── Categories Nav Strip ────────────────────────────────────────────────────
+// ─── Categories Nav Strip ─────────────────────────────────────────────────────
 async function CategoriesStrip() {
   const categories = await getCategories();
   if (!categories || categories.length === 0) return null;
@@ -183,13 +245,13 @@ async function CategoriesStrip() {
   );
 }
 
-// ─── Breaking News Wrapper ───────────────────────────────────────────────────
+// ─── Breaking News Wrapper ────────────────────────────────────────────────────
 async function BreakingNewsWrapper() {
   const breakingPosts = await getBreakingNews(5);
   return <BreakingNews posts={breakingPosts} />;
 }
 
-// ─── Homepage ────────────────────────────────────────────────────────────────
+// ─── Homepage ─────────────────────────────────────────────────────────────────
 export default function HomePage() {
   return (
     <>
@@ -273,9 +335,16 @@ export default function HomePage() {
               Get breaking news and exclusive stories delivered straight to your
               inbox. No spam, unsubscribe anytime.
             </p>
-            <form className="flex flex-col sm:flex-row gap-0 max-w-md mx-auto border border-gray-300 focus-within:border-[#ac2b25] transition-colors bg-white">
+            {/* action + method add kiya — form properly submit hoga API route pe */}
+            <form
+              action="/api/newsletter"
+              method="POST"
+              className="flex flex-col sm:flex-row gap-0 max-w-md mx-auto border border-gray-300 focus-within:border-[#ac2b25] transition-colors bg-white"
+            >
               <input
                 type="email"
+                name="email"
+                required
                 placeholder="Enter your email address"
                 className="flex-1 px-5 py-3.5 bg-transparent text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
               />

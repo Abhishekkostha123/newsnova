@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display, JetBrains_Mono } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -9,16 +9,15 @@ import { ICategory } from "@/types";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-serif", display: "swap" });
-const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Breaking Jhansi News & Latest Updates`,
-    template: `%s | ${SITE_NAME}`,
+    default: `NewsNova - Breaking Jhansi News, UP Updates & Latest India Headlines`,
+    template: `%s | NewsNova`,
   },
   description:
-    "NewsNova is your trusted digital source for breaking Jhansi news, latest Uttar Pradesh updates, national headlines, politics, technology, and sports.",
+    "NewsNova is your trusted source for breaking Jhansi news, latest Uttar Pradesh updates, India news, politics, technology, entertainment, sports, and trending stories — all in one place.",
   keywords: [
   "Jhansi News",
   "breaking Jhansi news",
@@ -36,15 +35,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     url: SITE_URL,
-    siteName: SITE_NAME,
-    title: `${SITE_NAME} — Breaking Jhansi News & National Coverage`,
+    siteName: "NewsNova",
+    title: `NewsNova — Breaking Jhansi News & National Coverage`,
     description:
       "Get real-time Jhansi news, latest Uttar Pradesh updates, national headlines, politics, sports, and technology — all on NewsNova, your trusted digital news platform.",
     images: [{ url: `${SITE_URL}/og-default.png`, width: 1200, height: 630, alt: SITE_NAME }],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} — Breaking Jhansi News & National Coverage`,
+    title: `NewsNova | Breaking News from Jhansi, UP & Across India`,
     description:
       "Get real-time Jhansi news, latest Uttar Pradesh updates, national headlines, politics, sports, and technology — all on NewsNova, your trusted digital news platform.",
     images: [`${SITE_URL}/og-default.png`],
@@ -118,9 +117,9 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${playfair.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <head>
-        <link rel="alternate" type="application/rss+xml" title={`${SITE_NAME} RSS Feed`} href="/feed.xml" />
+        <link rel="alternate" type="application/rss+xml" title={`NewsNova RSS Feed`} href="/feed.xml" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteSchema) }}

@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { IPost } from "@/types";
 
@@ -18,16 +15,12 @@ export default function BreakingNews({ posts }: BreakingNewsProps) {
     <div className="breaking-ticker relative">
       <div className="container-main flex items-center py-2.5 gap-4">
         {/* Badge */}
-        <motion.div
-          animate={{ scale: [1, 1.05, 1] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="shrink-0 flex items-center gap-1.5 px-3 py-1 bg-white/20 rounded-full"
-        >
+        <div className="shrink-0 flex items-center gap-1.5 px-3 py-1 bg-white/20 rounded-full animate-pulse-badge">
           <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
           <span className="text-xs font-bold text-white uppercase tracking-wider">
             Breaking
           </span>
-        </motion.div>
+        </div>
 
         {/* Ticker */}
         <div className="overflow-hidden flex-1 min-w-0">

@@ -83,6 +83,7 @@ PostSchema.index({ category: 1, published: 1, createdAt: -1 });
 PostSchema.index({ tags: 1 });
 PostSchema.index({ isBreaking: 1, createdAt: -1 });
 PostSchema.index({ views: -1 });
+PostSchema.index({ title: "text", excerpt: "text", tags: "text" }, { weights: { title: 10, excerpt: 3, tags: 2 } });
 
 PostSchema.methods.incrementViews = function () {
   this.views += 1;

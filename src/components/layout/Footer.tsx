@@ -1,37 +1,13 @@
-"use client";
-
 import Link from "next/link";
-import { useState } from "react";
 import { ICategory } from "@/types";
+import NewsletterForm from "./NewsletterForm";
 
 interface FooterProps {
   categories: ICategory[];
 }
 
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyDJ07p4ub9J7QJN1cfaBI5FOo3gSIe0GsuBIvz3qaeOIUVPWJcGC5_OhzZvhm-TKYmFQ/exec";
-
 export default function Footer({ categories }: FooterProps) {
   const currentYear = new Date().getFullYear();
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-    setStatus("loading");
-    try {
-      await fetch(APPS_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: "Newsletter", email, message: "Newsletter subscription" }),
-      });
-      setStatus("success");
-      setEmail("");
-    } catch {
-      setStatus("error");
-    }
-  };
 
   return (
     <footer className="bg-[var(--bg-secondary)] border-t border-[var(--border-color)] mt-16">
@@ -83,7 +59,7 @@ export default function Footer({ categories }: FooterProps) {
                 aria-label="Instagram"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204 013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
                 </svg>
               </a>
             </div>
@@ -145,32 +121,7 @@ export default function Footer({ categories }: FooterProps) {
             <p className="text-sm text-[var(--text-muted)] mb-4">
               Get the latest Jhansi news delivered to your inbox.
             </p>
-            {status === "success" ? (
-              <p className="text-sm text-green-600 font-semibold py-2">
-                ✓ Subscribed! Thanks for joining.
-              </p>
-            ) : (
-              <form onSubmit={handleSubscribe} className="space-y-2">
-                <input
-                  type="email"
-                  placeholder="your@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="w-full px-4 py-2.5 bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-lg text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-primary)] transition-colors"
-                />
-                <button
-                  type="submit"
-                  disabled={status === "loading"}
-                  className="w-full px-4 py-2.5 bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-60"
-                >
-                  {status === "loading" ? "Subscribing..." : "Subscribe"}
-                </button>
-                {status === "error" && (
-                  <p className="text-xs text-red-500">Something went wrong. Try again.</p>
-                )}
-              </form>
-            )}
+            <NewsletterForm />
           </div>
 
         </div>

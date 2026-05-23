@@ -112,7 +112,7 @@ const sections = [
                     NewsNova is committed to delivering accurate and well-researched <strong>Jhansi news</strong> and regional updates. Our editorial team works diligently to verify information before publication. However, news is a dynamic and rapidly evolving field. Information that is accurate at the time of publication may become outdated, incomplete, or require correction as new facts emerge.
                 </p>
                 <p>
-                    NewsNova makes no warranties, express or implied, regarding the absolute accuracy, completeness, or timeliness of any news content published on this platform. All <strong>Jhansi news</strong> articles, reports, and updates are provided on an "as is" basis for general informational purposes only. Readers are encouraged to independently verify critical information before making any decisions based on our content.
+                    NewsNova makes no warranties, express or implied, regarding the absolute accuracy, completeness, or timeliness of any news content published on this platform. All <strong>Jhansi news</strong> articles, reports, and updates are provided on an &quot;as is&quot; basis for general informational purposes only. Readers are encouraged to independently verify critical information before making any decisions based on our content.
                 </p>
                 <p>
                     Corrections and updates to published articles are made at the discretion of our editorial team and will be clearly noted where applicable.

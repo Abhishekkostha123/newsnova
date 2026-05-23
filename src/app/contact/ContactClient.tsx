@@ -1,6 +1,5 @@
 "use client";
 
-import { Metadata } from "next";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -235,7 +234,7 @@ export default function ContactPage() {
                             Have a Story? We Want to Hear It!
                         </h2>
                         <p className="text-gray-300 max-w-2xl mx-auto mb-8">
-                            Are you holding onto crucial local information or the latest <strong>Jhansi news updates</strong>? Don't let the truth go unreported. Contact the Jhansi news team today and help us bring important stories to the forefront.
+                            Are you holding onto crucial local information or the latest <strong>Jhansi news updates</strong>? Don&apos;t let the truth go unreported. Contact the Jhansi news team today and help us bring important stories to the forefront.
                         </p>
                         <button
                             onClick={() => document.getElementById("message")?.focus()}

@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation";
 import { SITE_URL, SITE_NAME } from "@/lib/utils";
 import type { Metadata } from "next";
 
