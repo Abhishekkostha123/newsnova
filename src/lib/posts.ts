@@ -3,6 +3,7 @@ import dbConnect from "@/lib/db";
 import Post from "@/models/Post";
 import Category from "@/models/Category";
 import { IPost, ICategory, PaginatedResponse } from "@/types";
+import { getCategories } from "@/lib/categories";
 
 // Serializes mongoose document to plain object
 function serialize<T>(doc: unknown): T {
@@ -283,3 +284,43 @@ export const getHomepageCategoryData = cache(async (
 
   return { categories, groupedPosts };
 });
+
+export interface HomepageData {
+  breakingPosts: IPost[];
+  categories: ICategory[];
+  latestPosts: IPost[];
+  trendingPosts: IPost[];
+  categoryBlocks: {
+    category: ICategory;
+    posts: IPost[];
+  }[];
+}
+
+// Aggregated homepage data fetching to run DB requests in parallel and prevent duplicate fetches
+export const getHomepageData = cache(async (): Promise<HomepageData> => {
+  const [
+    breakingPosts,
+    categories,
+    latestPosts,
+    trendingPosts,
+    categoryBlocksData,
+  ] = await Promise.all([
+    getBreakingNews(5),
+    getCategories(),
+    getLatestPosts(8),
+    getTrendingPosts(6),
+    getHomepageCategoryData(4, 4),
+  ]);
+
+  return {
+    breakingPosts,
+    categories,
+    latestPosts,
+    trendingPosts,
+    categoryBlocks: categoryBlocksData.categories.map((cat) => ({
+      category: cat,
+      posts: categoryBlocksData.groupedPosts.get(cat.slug) || [],
+    })),
+  };
+});
+

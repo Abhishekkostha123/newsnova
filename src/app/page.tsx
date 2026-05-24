@@ -1,11 +1,4 @@
-import { Suspense } from "react";
-import {
-  getLatestPosts,
-  getBreakingNews,
-  getTrendingPosts,
-  getHomepageCategoryData,
-} from "@/lib/posts";
-import { getCategories } from "@/lib/categories";
+import { getHomepageData, HomepageData } from "@/lib/posts";
 import BreakingNews from "@/components/news/BreakingNews";
 import {
   HeroCard,
@@ -14,11 +7,6 @@ import {
   TrendingCard,
 } from "@/components/news/PostCards";
 import SectionHeader from "@/components/ui/SectionHeader";
-import {
-  HeroSkeleton,
-  PostCardSkeleton,
-  TrendingCardSkeleton,
-} from "@/components/ui/Skeletons";
 import { IPost, ICategory } from "@/types";
 import Link from "next/link";
 import { Metadata } from "next";
@@ -79,15 +67,13 @@ export const metadata: Metadata = {
 };
 
 // ─── Hero Section ─────────────────────────────────────────────────────────────
-async function HeroSection() {
-  const posts = await getLatestPosts(5);
+function HeroSection({ posts }: { posts: IPost[] }) {
   if (!posts || posts.length === 0) return null;
 
   const [mainPost, ...sidebarPosts] = posts;
 
   return (
     <section className="container-main mt-6 sm:mt-8">
-      {/* sr-only: Google + screen readers dono ke liye valid — text-[0px] risky tha */}
       <h1 className="sr-only">
         NewsNova — Breaking News from Jhansi, Bundelkhand & Uttar Pradesh
       </h1>
@@ -120,10 +106,7 @@ async function HeroSection() {
 }
 
 // ─── Latest News Grid ─────────────────────────────────────────────────────────
-// NOTE: React.cache() getLatestPosts mein lagao (lib/posts.ts) — tab yeh
-// HeroSection ke saath duplicate DB call nahi karega (same request mein dedupe)
-async function LatestNewsSection() {
-  const posts = await getLatestPosts(8);
+function LatestNewsSection({ posts }: { posts: IPost[] }) {
   if (!posts || posts.length === 0) return null;
 
   return (
@@ -147,8 +130,7 @@ async function LatestNewsSection() {
 }
 
 // ─── Trending Section ─────────────────────────────────────────────────────────
-async function TrendingSection() {
-  const posts = await getTrendingPosts(6);
+function TrendingSection({ posts }: { posts: IPost[] }) {
   if (!posts || posts.length === 0) return null;
 
   return (
@@ -172,17 +154,19 @@ async function TrendingSection() {
 }
 
 // ─── Category Blocks ──────────────────────────────────────────────────────────
-async function CategoryBlocksSection() {
-  const { categories, groupedPosts } = await getHomepageCategoryData(4, 4);
-  if (!categories || categories.length === 0) return null;
+function CategoryBlocksSection({
+  categoryBlocks,
+}: {
+  categoryBlocks: HomepageData["categoryBlocks"];
+}) {
+  if (!categoryBlocks || categoryBlocks.length === 0) return null;
 
   return (
     <section className="container-main mt-12 sm:mt-16">
       <SectionHeader title="Browse by Category" accent="Browse" />
 
       <div className="space-y-12">
-        {categories.map((category) => {
-          const posts = groupedPosts.get(category.slug) || [];
+        {categoryBlocks.map(({ category, posts }) => {
           if (posts.length === 0) return null;
 
           return (
@@ -219,8 +203,7 @@ async function CategoryBlocksSection() {
 }
 
 // ─── Categories Nav Strip ─────────────────────────────────────────────────────
-async function CategoriesStrip() {
-  const categories = await getCategories();
+function CategoriesStrip({ categories }: { categories: ICategory[] }) {
   if (!categories || categories.length === 0) return null;
 
   return (
@@ -245,86 +228,32 @@ async function CategoriesStrip() {
   );
 }
 
-// ─── Breaking News Wrapper ────────────────────────────────────────────────────
-async function BreakingNewsWrapper() {
-  const breakingPosts = await getBreakingNews(5);
-  return <BreakingNews posts={breakingPosts} />;
-}
-
 // ─── Homepage ─────────────────────────────────────────────────────────────────
-export default function HomePage() {
+export default async function HomePage() {
+  // Fetch all homepage data concurrently in a single request (Goal 8)
+  const data = await getHomepageData();
+
   return (
     <>
       {/* Breaking News Ticker */}
-      <Suspense fallback={null}>
-        <BreakingNewsWrapper />
-      </Suspense>
+      <BreakingNews posts={data.breakingPosts} />
 
       {/* Categories Navigation Strip */}
-      <Suspense fallback={null}>
-        <CategoriesStrip />
-      </Suspense>
+      <CategoriesStrip categories={data.categories} />
 
       {/* Hero Section */}
-      <Suspense
-        fallback={
-          <div className="container-main mt-6 sm:mt-8">
-            <HeroSkeleton />
-          </div>
-        }
-      >
-        <HeroSection />
-      </Suspense>
+      <HeroSection posts={data.latestPosts.slice(0, 5)} />
 
       {/* Latest News */}
-      <Suspense
-        fallback={
-          <div className="container-main mt-12 sm:mt-16">
-            <div className="h-8 w-48 skeleton mb-8" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <PostCardSkeleton key={i} />
-              ))}
-            </div>
-          </div>
-        }
-      >
-        <LatestNewsSection />
-      </Suspense>
+      <LatestNewsSection posts={data.latestPosts} />
 
       {/* Trending */}
-      <Suspense
-        fallback={
-          <div className="container-main mt-12 sm:mt-16">
-            <div className="h-8 w-48 skeleton mb-8" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <TrendingCardSkeleton key={i} rank={i + 1} />
-              ))}
-            </div>
-          </div>
-        }
-      >
-        <TrendingSection />
-      </Suspense>
+      <TrendingSection posts={data.trendingPosts} />
 
       {/* Category Blocks */}
-      <Suspense
-        fallback={
-          <div className="container-main mt-12 sm:mt-16">
-            <div className="h-8 w-64 skeleton mb-8" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <PostCardSkeleton key={i} />
-              ))}
-            </div>
-          </div>
-        }
-      >
-        <CategoryBlocksSection />
-      </Suspense>
+      <CategoryBlocksSection categoryBlocks={data.categoryBlocks} />
 
-      {/* Newsletter CTA */}
+      {/* Newsletter CTA (Server-Side Form Submission - Goal 10) */}
       <section className="container-main mt-16 sm:mt-20 mb-8">
         <div className="bg-[#f8f9fa] border-y-4 border-t-[#ac2b25] border-b-gray-200 p-8 sm:p-12 text-center relative overflow-hidden">
           <div className="relative z-10">
@@ -335,7 +264,6 @@ export default function HomePage() {
               Get breaking news and exclusive stories delivered straight to your
               inbox. No spam, unsubscribe anytime.
             </p>
-            {/* action + method add kiya — form properly submit hoga API route pe */}
             <form
               action="/api/newsletter"
               method="POST"
