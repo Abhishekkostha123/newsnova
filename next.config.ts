@@ -9,8 +9,6 @@ const nextConfig: NextConfig = {
     deviceSizes: [320, 420, 768, 1024, 1200],
     imageSizes: [16, 32, 48, 64, 96],
     remotePatterns: [
-      // Allow any HTTPS image source — required for a news site where
-      // article images come from many unpredictable external domains.
       { protocol: "https", hostname: "**" },
       { protocol: "http", hostname: "**" },
     ],
@@ -47,17 +45,17 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        // Article pages: ISR-friendly cache (60s fresh, 5min stale)
+        // Article pages: 1 hour fresh, 24hr stale ✅
         source: "/post/:slug*",
         headers: [
-          { key: "Cache-Control", value: "public, s-maxage=60, stale-while-revalidate=300" },
+          { key: "Cache-Control", value: "public, s-maxage=3600, stale-while-revalidate=86400" },
         ],
       },
       {
-        // Category pages: slightly longer cache
+        // Category pages: 2 hour fresh, 24hr stale ✅
         source: "/category/:slug*",
         headers: [
-          { key: "Cache-Control", value: "public, s-maxage=120, stale-while-revalidate=600" },
+          { key: "Cache-Control", value: "public, s-maxage=7200, stale-while-revalidate=86400" },
         ],
       },
       {
