@@ -12,7 +12,7 @@ import Link from "next/link";
 import { Metadata } from "next";
 
 // ─── ISR: 5 min kaafi hai news site ke liye (60s bahut aggressive tha) ───────
-export const revalidate = 300;
+export const revalidate = 7200;
 
 // ─── SEO Metadata ─────────────────────────────────────────────────────────────
 export const metadata: Metadata = {
