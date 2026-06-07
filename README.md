@@ -27,7 +27,7 @@ Copy `.env.local` and update the MongoDB connection string:
 MONGODB_URI=mongodb+srv://your-user:your-password@cluster.mongodb.net/newsnova
 NEXT_PUBLIC_SITE_URL=https://www.newsnova.online
 NEXT_PUBLIC_SITE_NAME=NewsNova
-REVALIDATE_INTERVAL=60
+REVALIDATE_INTERVAL=7200
 ```
 
 ### 3. Seed the Database (Optional)

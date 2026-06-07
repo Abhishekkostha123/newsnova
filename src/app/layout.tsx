@@ -59,6 +59,9 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  verification: {
+    google: "pjNsBVZQv-mYx-M5qldtiocIXarZKJ2NJ-Qx_3ldIpQ",
+  },
 };
 
 async function LayoutShell({ children }: { children: React.ReactNode }) {

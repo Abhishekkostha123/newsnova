@@ -3,7 +3,7 @@ import { getPostsForSitemap } from "@/lib/posts";
 import { getAllCategorySlugs } from "@/lib/categories";
 import { SITE_URL } from "@/lib/utils";
 
-export const revalidate = 3600; // Revalidate sitemap every hour
+export const revalidate = 7200; // Revalidate sitemap every hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [posts, categorySlugs] = await Promise.all([

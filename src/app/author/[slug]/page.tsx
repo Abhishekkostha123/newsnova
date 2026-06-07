@@ -1,7 +1,7 @@
 import { SITE_URL, SITE_NAME } from "@/lib/utils";
 import type { Metadata } from "next";
 
-export const revalidate = 60;
+export const revalidate = 7200;
 export const dynamicParams = true;
 
 // ─── Generate Metadata ──────────────────────────────────────────────────────

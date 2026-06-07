@@ -7,7 +7,7 @@ import LoadMorePosts from "@/components/news/LoadMorePosts";
 import { PostCardSkeleton } from "@/components/ui/Skeletons";
 import { SITE_URL, SITE_NAME } from "@/lib/utils";
 
-export const revalidate = 60;
+export const revalidate = 7200;
 export const dynamicParams = true; // Allows Next.js to dynamically fetch missing categories
 
 // ─── Generate Static Params ─────────────────────────────────────────────────

@@ -12,7 +12,7 @@ import ViewTracker from "@/components/article/ViewTracker";
 import CommentSection from "@/components/comments/CommentSection";
 import { PostCard } from "@/components/news/PostCards";
 
-export const revalidate = 60;
+export const revalidate = 7200;
 export const dynamicParams = true; // Allows Next.js to fetch new articles dynamically instead of returning 404
 
 // ─── Generate Static Params ─────────────────────────────────────────────────
